@@ -78,9 +78,64 @@ Depois de preencher as informações da pipeline, fazer outras tentativas trocan
 ![](./docs/prints/item_2/19_pipeline_executada.png)
 
 ## Item 3 - Exploração
+Pelo que pude perceber, os dados foram automaticamente catalogados na plataforma da Dadosfera após a integração, a unica coisa que fiz foi alterar o nome da tabela no catálogo para "orders_landing_zone".
 
+Com os dados já catalogados, pude explora-los através da plataforma da Dadosfera que me trouxe algumas estatísticas sobre cada coluna do conjunto e uma visualização de uma amostra dos dados em formato de tabela:
+![](./docs/prints/item_3/01_estatisticas_basicas.png)
+![](./docs/prints/item_3/02_visualizacao_em_tabela.png)
+
+Explorando os dados, pude ver os defeitos que eu mesmo inseri propositalmente neles já que eu fiz o script que os gera. Entre os defeitos inseridos estão valores nulos, valores fora de um alcance de valores lógico, linhas duplicadas, endereços de e-mail fora do padrão e nomes com espaços em branco antes e depois do nome.
+
+Tendo conhecimento sobre os defeitos da base de dados eu estava pronto para explora-los melhor com outras ferramentas.
 
 ## Item 4 - Data Quality
+Para a etapa de verificaćão de qualidade de dados desenvolvi o script [data_quality_report.py](./scripts/data_quality_report.py) que lê o conjunto de dados gerados pelo script [generate_data.py](./scripts/bronze/generate_data.py) em CSV com Pandas e faz validações de qualidade de dados com Great Expectations.
+
+As validações foram definidas com base em um Common Data Model (CDM) orientado a entidades de negócio, cobrindo regras de integridade, consistência e semântica dos dados.
+
+Foram realizadas as seguintes verificações sobre o conjunto de dados:
+
+**Customer:**
+- Verificação de valores nulos nos campos customer_id, customer_name e customer_email.
+- Validação de higiene de strings, garantindo que o campo customer_name não contenha espaços em branco no início ou no final.
+- Validação do formato de e-mail, assegurando que os valores em customer_email sigam o padrão esperado.
+- Validação de domínio, garantindo que o estado do cliente (customer_state) pertença ao conjunto de estados válidos.
+
+**Order:**
+- Verificação de unicidade do identificador do pedido (order_id), evitando registros duplicados.
+- Verificação de valores nulos nos campos order_id e order_date.
+- Validação de domínio do status do pedido (status), restringindo os valores a um conjunto previamente definido.
+- Validação de integridade referencial, garantindo a presença de customer_id associado ao pedido.
+
+**Order Item:**
+- Verificação de valores nulos nos campos product_id, order_id, quantity e unit_price.
+- Validação de intervalos lógicos, garantindo que:
+- A quantidade (quantity) seja maior ou igual a 1.
+- O preço unitário (unit_price) seja maior que zero, com tolerância controlada.
+
+**Payment:**
+- Validação de domínio do método de pagamento (payment_method), restringindo os valores aos meios aceitos.
+- Verificação de integridade referencial, garantindo a associação do pagamento a um pedido (order_id).
+
+**Shipping:**
+- Validação de regras de negócio, assegurando que pedidos cancelados não possuam data de envio (shipping_date).
+- Verificação de consistência temporal, garantindo que a data de envio seja posterior à data do pedido para pedidos não cancelados.
+
+**Review:**
+- Validação de regras de negócio, garantindo que pedidos cancelados não possuam avaliações (review).
+
+Ao final da execução, o script gera um relatório de validação no console, informando o status geral da qualidade dos dados, o total de expectativas avaliadas e o detalhamento das validações que apresentaram falhas:
+
+![](./docs/prints/item_4/01_relatorio_de_qualidade_de_dados.png)
+
+O pipeline de Data Quality foi executado com sucesso e identificou cinco violações relevantes nos dados de entrada:
+
+- Nomes de clientes com espaços em branco antes e/ou depois do nome
+- Id de compra duplicados
+- Valores fora de uma faixa de valores lógica no campo 'quantity'
+- Valores nulos de valor unitário
+- Valores de data de compra antes de valores de data de entrega e vice versa
+
 ## Item 5 - Processamento
 ## Item 6 - Modelagem
 ## Item 7 - Análise
