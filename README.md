@@ -25,7 +25,7 @@ O script gera 125 mil linhas de dados que apesar de sintéticos seguem uma coer�
 O arquivo do script esta localizado em [./scripts/bronze/generate_data.py](./scripts/bronze/generate_data.py) e os arquivos de dados em CSV que ele grava estão localizados em [./data/raw/synthetic_data_full.csv](./data/raw/synthetic_data_full.csv)(sendo o conjunto de dados completo) e [./data/raw/synthetic_data_sample.csv](./data/raw/synthetic_data_sample.csv)(sendo uma amostra de mil linhas do conjunto completo).
 
 ## Item 2 - Integração
-Na etapa de integração e ingestão da base de dados gerada na plataforma da Dadosfera, inicialmente criei um script([./scripts/bronze/ingest.py](./scripts/bronze/ingest.py)) que grava os dados que estão armazenados localmente em uma planilha do Google Sheets no meu Google Drive pessoal para poder conectar a Dadosfera à essa planilha mais facilmente por estar na nuvem.
+Na etapa de integração e ingestão da base de dados gerada na plataforma da Dadosfera, inicialmente criei um script([./scripts/ingest.py](./scripts/ingest.py)) que grava os dados que estão armazenados localmente em uma planilha do Google Sheets no meu Google Drive pessoal para poder conectar a Dadosfera à essa planilha mais facilmente por estar na nuvem.
 
 Antes mesmo de criar o script, comecei configurando a minha conta do Google para poder me comunicar com a API do Google, comecei ativando as APIs do Google Drive e do Google Sheets na seção "APIs e serviços" do Google Cloud Console:
 ![](./docs/prints/item_2/01_ativar_apis.png)
@@ -39,7 +39,16 @@ Para finalmente poder me comunicar com as APIs, movi o arquivo baixado de creden
 
 ![](./docs/prints/item_2/05_renomear_e_mover_credenciais.png)
 
-Com isso pude finalmente executar o script que move os dados para o Google Sheets, precisando apenas autorizar o script a manipular arquivos no meu Google Drive para que fosse criado o arquivo [token.json](./token.json) e não fosse necessária essa confirmação em execuções futuras.
+Com isso pude finalmente executar o script que move os dados para o Google Sheets, precisando apenas autorizar o script a manipular arquivos no meu Google Drive para que fosse criado o arquivo [token.json](./token.json) e não fosse necessária essa confirmação em execuções futuras. Para executar o script deve-se executa-lo como módulo: ```python -m scripts.bronze.generate_data``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado) com os seguintes parametros
+```python
+if __name__ == "__main__":
+    ingest_data_to_sheets(
+        csv_file="./data/raw/synthetic_data_full.csv",
+        secret_path="client_secret.json",
+        env_path=".env",
+        spreadsheet_name="raw_orders"
+    )
+```
 ![](./docs/prints/item_2/06_autorizar_execucao.png)
 ![](./docs/prints/item_2/07_execucao_autorizada.png)
 
@@ -89,7 +98,9 @@ Explorando os dados, pude ver os defeitos que eu mesmo inseri propositalmente ne
 Tendo conhecimento sobre os defeitos da base de dados eu estava pronto para explora-los melhor com outras ferramentas.
 
 ## Item 4 - Data Quality
-Para a etapa de verificaćão de qualidade de dados desenvolvi o script [data_quality_report.py](./scripts/data_quality_report.py) que lê o conjunto de dados gerados pelo script [generate_data.py](./scripts/bronze/generate_data.py) em CSV com Pandas e faz validações de qualidade de dados com Great Expectations.
+Para a etapa de verificação de qualidade de dados desenvolvi o script [data_quality_report.py](./scripts/silver/data_quality_report.py) que lê o conjunto de dados gerados pelo script [generate_data.py](./scripts/bronze/generate_data.py) em CSV com Pandas e faz validações de qualidade de dados com Great Expectations.
+
+Para executar o script deve-se executa-lo como módulo: ```python -m scripts.silver.data_quality_report``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado)
 
 As validações foram definidas com base em um Common Data Model (CDM) orientado a entidades de negócio, cobrindo regras de integridade, consistência e semântica dos dados.
 
@@ -131,10 +142,22 @@ Ao final da execução, o script gera um relatório de validação no console, i
 O pipeline de Data Quality foi executado com sucesso e identificou cinco violações relevantes nos dados de entrada:
 
 - Nomes de clientes com espaços em branco antes e/ou depois do nome
+- Endereços de e-mail fora do padrão
 - Id de compra duplicados
 - Valores fora de uma faixa de valores lógica no campo 'quantity'
 - Valores nulos de valor unitário
 - Valores de data de compra antes de valores de data de entrega e vice versa
+
+Para tratar esses defeitos nos dados optei por utilizar PySpark(Spark) por ser uma ferramenta muito adequada para cenários de produção e de grandes volumes de dados, e também por ser uma ferramenta que já uso há alguns anos(apesar de também trabalhar com Pandas, R, etc).
+
+Desenvolvi um script com PysPark que lê os dados crus, corrige da forma mais adequada possível(procurando recuperar dados) cada um dos defeitos que encontrei com o Great Expectations e grava o dataset limpo localmente em [data/clean/clean_orders/](./data/clean/clean_orders/). O script pode ser executado como módulo com o comando ```python -m scripts.silver.clean``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado e é necessário ter um JDK insatalado para executar Spark, de preferência o 17).
+
+Agora se mudarmos os parametros da funcao de data quality para que ela verifique a qualidade de dados sobre os dados limpos pelo script PySpark ser;a possível observar que o conjunto de dados limpos passa em todas as condicoes de qualidade de dados definidas no script as quais os dados crus não passavam:
+![](./docs/prints/item_4/03_executanto_funcao_com_parametros_diferentes.png)
+![](./docs/prints/item_4/04_relatorio_de_qualidade_de_dados_limpos.png)
+
+Após isso fiz o mesmo procedimento do [Item 2](#item-2---integração), primeiro executei o script que carrega os dados([scripts/ingest.py](./scripts/ingest.py)) no Google Sheets com outros parâmetros como mostrado abaixo e depois fiz as etapas manuais na plataforma para integrar e catalogar também os dados limpos na plataforma da Dadosfera.
+![](./docs/prints/item_4/05_ingestao_de_dados_limpos.png)
 
 ## Item 5 - Processamento
 ## Item 6 - Modelagem

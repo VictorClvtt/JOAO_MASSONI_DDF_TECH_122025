@@ -5,3 +5,5 @@ venv
 
 client_secret.json
 token.json
+
+__pychache__
