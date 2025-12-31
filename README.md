@@ -196,6 +196,107 @@ Neste repositório é possível acessar apenas uma [amostra dos dados](./data/ra
 ## Item 6 - Modelagem
 Para definir um modelo de dados sobre o conjunto de dados de vendas optei por começar desenvolvendo um script PySpark que modela os dados posteriormente limpos por outro script PySpark pois estou mais acostumado a olhar o schema dos dados por meio do código e a partir disso modelar as tabelas.
 
+### Modelagem definida:
+Durante o desenvolvimento do [script de modelagem](./scripts/gold/data_modeling.py) eu desenvolvi o seguinte modelo:
+```
+fact_order schema:
+root
+ |-- order_id: integer (nullable = true)
+ |-- order_date_sk: string (nullable = true)
+ |-- shipping_date_sk: string (nullable = true)
+ |-- customer_sk: string (nullable = true)
+ |-- product_sk: string (nullable = true)
+ |-- payment_method_sk: string (nullable = true)
+ |-- order_status_sk: string (nullable = true)
+ |-- quantity: integer (nullable = true)
+ |-- unit_price: double (nullable = true)
+ |-- total_amount: double (nullable = true)
+
+dim_date schema:
+root
+ |-- full_date: date (nullable = true)
+ |-- day: integer (nullable = true)
+ |-- month: integer (nullable = true)
+ |-- month_name: string (nullable = true)
+ |-- quarter: integer (nullable = true)
+ |-- year: integer (nullable = true)
+ |-- day_of_week: string (nullable = true)
+ |-- is_weekend: boolean (nullable = false)
+ |-- date_sk: string (nullable = true)
+
+dim_order_status schema:
+root
+ |-- status: string (nullable = true)
+ |-- order_status_sk: string (nullable = true)
+
+dim_payment_method schema:
+root
+ |-- payment_method: string (nullable = true)
+ |-- payment_method_sk: string (nullable = true)
+
+dim_product schema:
+root
+ |-- product_id: integer (nullable = true)
+ |-- product_name: string (nullable = true)
+ |-- category: string (nullable = true)
+ |-- supplier: string (nullable = true)
+ |-- product_sk: string (nullable = true)
+
+dim_customer schema:
+root
+ |-- customer_id: integer (nullable = true)
+ |-- customer_name: string (nullable = true)
+ |-- customer_email: string (nullable = true)
+ |-- customer_sk: string (nullable = true)
+ |-- location_sk: string (nullable = true)
+
+dim_location schema:
+root
+ |-- city: string (nullable = true)
+ |-- state: string (nullable = true)
+ |-- location_sk: string (nullable = true)
+```
+Estes são os schemas de cada tabela definida para o modelo dimensional de dados que visa identificar cada entidade de dados e suas variáveis e tornar consultas analíticas mais eficientes.
+
+A modelagem proposta segue os princípios de Dimensional Modeling (Kimball), adotando um Snowflake Schema, com uma tabela fato central (fact_order) e dimensões descritivas ao redor.
+Essa abordagem foi escolhida por favorecer simplicidade, performance analítica e facilidade de consumo por ferramentas de BI, sendo adequada ao cenário de pedidos e vendas do cliente.
+
+### Visões finais dos dados:
+- 📊 Visão 1 – Vendas por período e produto
+```SQL
+SELECT
+    d.year,
+    d.month,
+    p.category,
+    p.product_name,
+    SUM(f.quantity) AS total_quantity,
+    SUM(f.total_amount) AS total_revenue
+FROM fact_order f
+JOIN dim_date d ON f.order_date_sk = d.date_sk
+JOIN dim_product p ON f.product_sk = p.product_sk
+GROUP BY d.year, d.month, p.category, p.product_name;
+```
+Vendas por período e produto permite analisar o desempenho comercial ao longo do tempo, detalhando vendas e receita por produto e categoria, apoiando decisões relacionadas a planejamento, estoque e estratégia de vendas.
+
+- 👤 Visão 2 – Comportamento do cliente
+```SQL
+SELECT
+    c.customer_name,
+    l.city,
+    l.state,
+    COUNT(DISTINCT f.order_id) AS total_orders,
+    SUM(f.total_amount) AS total_spent
+FROM fact_order f
+JOIN dim_customer c ON f.customer_sk = c.customer_sk
+JOIN dim_location l ON c.location_sk = l.location_sk
+GROUP BY c.customer_name, l.city, l.state;
+```
+Comportamento do cliente possibilita analisar padrões de consumo dos clientes, considerando volume de pedidos, valor gasto e localização geográfica, sendo útil para segmentação, marketing e identificação de clientes estratégicos.
+
+### Diagrama da Modelagem Diomensional:
+Baseado no modelo que desenvolvi no script, criei um diagrama relacional do modelo de dados:
+![](./docs/diagrams/item_6/diagrama_dw.png)
+
 ## Item 7 - Análise
 ## Item 8 - Pipelines
 ## Item 9 - Data Apps
