@@ -298,6 +298,172 @@ Baseado no modelo que desenvolvi no script, criei um diagrama relacional do mode
 ![](./docs/diagrams/item_6/diagrama_dw.png)
 
 ## Item 7 - Análise
+Para iniciar a etapa de análise comecei clicando no módulo de 'Visualização' da plataforma da Dadosfera:
+![](./docs/prints/item_7/01_opcao_visualizacao.png)
+
+Depois disso fui direcionado para a pagina de login do Metabase onde fiz login com as mesmas credenciais da Dadosfera, depois de logado tive acesso à pagina inicial do Metabase onde cliquei no ícone de três pontos na seção de 'coleções' e cliquei em 'Coleção nova':
+![](./docs/prints/item_7/02_opcao_colecao_nova.png)
+
+Com isso o site abre um modal onde defini o nome da minha coleção de acordo com o padrão de nome indicado na documentação do case e cliquei em 'Criar' para finalmente criar a coleção:
+![](./docs/prints/item_7/03_criar_colecao.png)
+![](./docs/prints/item_7/04_colecao_criada.png)
+
+Para criar a Dashboard(painel) onde iria colocar os gráficos da análise cliquei no botão '+ Novo' na tela da minha coleção e depois cliquei em 'Painel':
+![](./docs/prints/item_7/05_opcao_painel.png)
+
+No modal que abriu eu defini um nome para a minha Dashboard e cliquei em 'Criar' para finalmente criar a Dashboard:
+![](./docs/prints/item_7/06_criar_painel.png)
+
+Com isso fui redirecionado para a página da nova Dashboard recém criada onde cliquei em 'Adicionar um gráfico' e depois em 'Nova consultan SQL' para iniciar a criação dos gráficos:
+![](./docs/prints/item_7/07_opcao_criar_grafico.png)
+![](./docs/prints/item_7/08_opcao_nova_consulta_SQL.png)
+
+Depois disso fui redirecionado para a tela de criação de gráficos onde selecionei o banco de dados 'Snmowflake' onde estava localizada a minha tabela de dados refinados:
+![](./docs/prints/item_7/09_opcao_snowflake.png)
+
+Com isso pude desenvolver e executar queries SQL e depois gerar gráficos, a primeira query executada gera um gráfico de barras para comparação de renda gerada por cada categorias:
+
+Código da query:
+```SQL
+SELECT
+  category,
+  SUM(quantity * unit_price) AS total_revenue
+FROM orders
+GROUP BY category
+ORDER BY total_revenue DESC;
+```
+Pergunta: ``Quais categorias mais geram receita?``
+
+![](./docs/prints/item_7/10_resultado_da_query.png)
+
+Depois de executar a query e ver o resultado cliquei em 'Display' e e depois selecionei o tipo de gráfico de barras: 
+![](./docs/prints/item_7/11_opcao_display.png)
+![](./docs/prints/item_7/12_grafico_de_barras_(categorias).png)
+
+Por fim salvei o gráfico e fui redirecionado para a página da dashboard com o novo gráfico já inserido nela, esse processo foi repetido para todos os graficos seguintes
+![](./docs/prints/item_7/13_salvar_grafico_de_barras.png)
+
+repeti o processo para o grafico de linhas para análise de série temporal onde aé possível ver a variação de renda ao longo dos meses do ano:
+
+Código da query:
+```SQL
+SELECT
+  DATE_TRUNC('month', order_date) AS month,
+  SUM(quantity * unit_price) AS total_revenue
+FROM orders
+GROUP BY month
+ORDER BY month;
+```
+Pergunta: ``Como a receita evolui mensalmente?``
+
+![](./docs/prints/item_7/14_salvar_grafico_de_linhas.png)
+
+Após os dois primeiros gráficos estarem prontos pude velos na dashboard e parti para a criação dos outros cinco gráficos e perguntas:
+![](./docs/prints/item_7/15_analise_de_categorias_e_serie_temporal.png)
+
+### Perguntas:
+
+#### Pergunta 1 (Gráfico de Mapa):
+
+Código da query:
+```SQL
+SELECT
+  customer_state,
+  SUM(quantity * unit_price) AS total_revenue
+FROM orders
+GROUP BY customer_state;
+```
+Pergunta: ``Quais estados representam mais receita?``
+
+![](./docs/prints/item_7/16_pergunta_1.png)
+
+#### Pergunta 2 (Gráfico de Cascata):
+
+Código da query:
+```SQL
+SELECT
+  category,
+  ROUND(SUM(quantity * unit_price) / COUNT(*), 2) AS avg_order_revenue
+FROM TB__8F4J5N__PAGINA1
+GROUP BY category
+ORDER BY avg_order_revenue DESC;
+```
+Pergunta: ``Quais categorias geram mais receita por pedido?``
+
+![](./docs/prints/item_7/17_pergunta_2.png)
+
+#### Pergunta 3 (Gráfico de Combo):
+
+Código da query:
+```SQL
+SELECT
+  customer_state,
+  COUNT(*) AS total_vendas,
+  SUM(CASE WHEN status = 'Cancelado' THEN 1 ELSE 0 END) AS total_cancelamentos,
+  ROUND(
+    100.0 * SUM(CASE WHEN status = 'Cancelado' THEN 1 ELSE 0 END) / COUNT(*),
+    2
+  ) AS pct_cancelamento
+FROM TB__8F4J5N__PAGINA1
+GROUP BY customer_state
+ORDER BY pct_cancelamento DESC;
+```
+Pergunta: ``Quais estados tem as maiores porcentagens de cancelamento de pedidos?``
+
+![](./docs/prints/item_7/18_pergunta_3.png)
+
+#### Pergunta 4 (Gráfico de Linhas):
+
+Código da query:
+```SQL
+SELECT
+  customer_state,
+  ROUND(
+    100.0 * SUM(
+      CASE
+        WHEN DATEDIFF(
+          'day',
+          CAST(order_date AS TIMESTAMP),
+          CAST(shipping_date AS TIMESTAMP)
+        ) <= 5 THEN 1 ELSE 0
+      END
+    ) / COUNT(*),
+    2
+  ) AS pct_within_sla
+FROM TB__8F4J5N__PAGINA1
+WHERE shipping_date IS NOT NULL
+GROUP BY customer_state
+ORDER BY pct_within_sla DESC;
+```
+Pergunta: ``Qual é a porcentagem de entrega dentro de 5 dias de cada estado?``
+
+![](./docs/prints/item_7/19_pergunta_4.png)
+
+#### Pergunta 5 (Gráfico de Dispersão):
+
+Código da query:
+```SQL
+SELECT
+  product_id,
+  product_name,
+  category,
+  ROUND(AVG(unit_price), 2) AS avg_unit_price,
+  COUNT(*) AS total_orders,
+  ROUND(SUM(quantity * unit_price), 2) AS total_revenue
+FROM TB__8F4J5N__PAGINA1
+WHERE unit_price IS NOT NULL
+GROUP BY product_id, product_name, category
+HAVING COUNT(*) >= 5
+ORDER BY avg_unit_price;
+```
+Pergunta: ``Existe relação entre o preço do produto e o volume de pedidos?``
+
+![](./docs/prints/item_7/20_pergunta_5.png)
+
+Depois de criar todos esses gráficos respondendo às perguntas finalmente obtive a dashboard finalizada:
+![](./docs/prints/item_7/21_dashboard_finalizada.png)
+![](./docs/prints/item_7/22_dashboard_finalizada.png)
+
 ## Item 8 - Pipelines
 ## Item 9 - Data Apps
 ## Item 10 - Apresentação

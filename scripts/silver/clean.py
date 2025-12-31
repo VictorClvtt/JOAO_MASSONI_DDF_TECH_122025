@@ -62,15 +62,10 @@ logger.info(f"Remaining null unit_price values after imputation: {remaining_null
 # Removendo linhas com valores de quantidade fora da faixa de valores lógica
 logger.info("Removing rows with invalid quantity values (quantity < 1)")
 
-df = df.withColumn(
-    "quantity",
-    F.when(
-        F.col("quantity") < 1,
-        None
-    ).otherwise(F.col("quantity"))
+df = df.where(
+    F.col("quantity") < 0,
 )
 
-df = df.dropna(subset=["quantity"])
 logger.info("Invalid quantity rows removed")
 
 # %%

@@ -165,5 +165,5 @@ if __name__ == "__main__":
         csv_folder="./data/clean/clean_orders",
         secret_path="client_secret.json",
         env_path=".env",
-        spreadsheet_name="clean_orders"
+        spreadsheet_name="clean_orders_new"
     )
