@@ -16,6 +16,8 @@ Case desenvolvido por **João Victor Clivatti Massoni**
 - [Item Bonus - GenAI + Data Apps](#item-bonus---genai--data-apps)
 
 ## Item 0 - Agilidade e Planejamento
+Abaixo está o diagrama de todo o case representando o meu entendimento e planejamento do case como todo:
+![](./docs/diagrams/item_0/fluxograma_case.png)
 
 ## Item 1 - Base de Dados
 Na escolha do conjunto de dados optei por criar um script Python que gera e salva localmente uma base de dados sintéticos sobre vendas, que seriam vendas da empresa de e-commerce a qual a definição do case se refere.
@@ -152,15 +154,48 @@ Para tratar esses defeitos nos dados optei por utilizar PySpark(Spark) por ser u
 
 Desenvolvi um script com PysPark que lê os dados crus, corrige da forma mais adequada possível(procurando recuperar dados) cada um dos defeitos que encontrei com o Great Expectations e grava o dataset limpo localmente em [data/clean/clean_orders/](./data/clean/clean_orders/). O script pode ser executado como módulo com o comando ```python -m scripts.silver.clean``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado e é necessário ter um JDK insatalado para executar Spark, de preferência o 17).
 
-Agora se mudarmos os parametros da funcao de data quality para que ela verifique a qualidade de dados sobre os dados limpos pelo script PySpark ser;a possível observar que o conjunto de dados limpos passa em todas as condicoes de qualidade de dados definidas no script as quais os dados crus não passavam:
-![](./docs/prints/item_4/03_executanto_funcao_com_parametros_diferentes.png)
-![](./docs/prints/item_4/04_relatorio_de_qualidade_de_dados_limpos.png)
+Agora se mudarmos os parametros da funcao de data quality para que ela verifique a qualidade de dados sobre os dados limpos pelo script PySpark ser;a possível observar que o conjunto de dados limpos passa em todas as condições de qualidade de dados definidas no script as quais os dados crus não passavam:
+```python
+if __name__ == "__main__":
+    # data_quality_report(dataset="raw", dataset_path="./data/raw/synthetic_data_full.csv")
+    data_quality_report(dataset="clean", dataset_path="./data/clean/clean_orders/*.csv")
+```
+![](./docs/prints/item_4/03_relatorio_de_qualidade_de_dados_limpos.png)
 
 Após isso fiz o mesmo procedimento do [Item 2](#item-2---integração), primeiro executei o script que carrega os dados([scripts/ingest.py](./scripts/ingest.py)) no Google Sheets com outros parâmetros como mostrado abaixo e depois fiz as etapas manuais na plataforma para integrar e catalogar também os dados limpos na plataforma da Dadosfera.
-![](./docs/prints/item_4/05_ingestao_de_dados_limpos.png)
+```python
+if __name__ == "__main__":
+    ingest_data_to_sheets(
+        csv_folder="./data/clean/clean_orders",
+        secret_path="client_secret.json",
+        env_path=".env",
+        spreadsheet_name="clean_orders"
+    )
+```
 
 ## Item 5 - Processamento
+O dataset que escolhi para esse item é o dataset que baixei para o diretório [./data/raw/](./data/raw/) e que se encontra para download [nesse link](https://raw.githubusercontent.com/octaprice/ecommerce-product-dataset/main/data/mercadolivre_com_br/reviews_mercadolivre_com_br_1.json), o dataset se trata de um pouco mais de 100 mil registros em JSON de avaliações de produtos do Mercado Livre, cada registro contendo a data da avaliação, uma nota numérica, uma avaliação textual e o link original produto avaliado, sendo possível extrair features dos campos de avaliação textual e do link.
+
+Para executar o código de extração de features optei por utilizar o Google Colab como indicado pela documentação do case por ser um ambiente mais preparado para esse tipo de código.
+
+Por estar trabalhando com IA, utilizei modelos do HuggingFace, o que me fez precisar criar uma conta no HuggingFace, criar um token e registrar esse token com o nome 'HF_TOKEN' no Colab para que eu pudesse utilizar os modelos.
+
+Criei um diretório chamado 'data' e dentro dele outro diretório chamado 'raw' e copiei o [arquivo JSON](./data/raw/reviews_mercadolivre_com_br_1.json) para dentro desse diretório manualmente.
+
+Em seguida, desenvolvi um [script](./scripts/bronze/extract_features.py) que utiliza inteligência artificial para extrair informações adicionais de forma programática a partir dos campos content e product_url do JSON original. Entre essas informações, estão: uma lista de tópicos relacionados ao produto, um campo que indica se o usuário recomenda ou não o produto, e uma análise de sentimento que classifica a avaliação como muito negativa, negativa, neutra, positiva ou muito positiva.""Em seguida, desenvolvi um script que utiliza duas inteligências artificiais para enriquecer os dados extraídos do JSON original (content e product_url).
+
+- A primeira IA, ```tabularisai/multilingual-sentiment-analysis```, foi utilizada para análise de sentimento, classificando cada avaliação como muito negativa, negativa, neutra, positiva ou muito positiva.
+Além disso, o script gera um campo que indica se o usuário recomenda ou não o produto, com base no sentimento detectado.
+
+- A segunda IA, ```MoritzLaurer/mDeBERTa-v3-base-mnli-xnli```, foi aplicada em uma tarefa de zero-shot classification para identificar tópicos relevantes mencionados pelo usuário no review e no nome do produto.
+
+Por fim o script grava esse novo JSON com as features dentro do mesmo diretório do original.
+
+Neste repositório é possível acessar apenas uma [amostra dos dados](./data/raw/reviews_with_features_sample.json) com features pois infelizmente o processamento que o Colab me disponibilizou não me possibilitou processar os 100 mil registros.
+
 ## Item 6 - Modelagem
+Para definir um modelo de dados sobre o conjunto de dados de vendas optei por começar desenvolvendo um script PySpark que modela os dados posteriormente limpos por outro script PySpark pois estou mais acostumado a olhar o schema dos dados por meio do código e a partir disso modelar as tabelas.
+
 ## Item 7 - Análise
 ## Item 8 - Pipelines
 ## Item 9 - Data Apps
