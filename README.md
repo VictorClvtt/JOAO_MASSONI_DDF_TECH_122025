@@ -465,6 +465,62 @@ Depois de criar todos esses gráficos respondendo às perguntas finalmente obtiv
 ![](./docs/prints/item_7/22_dashboard_finalizada.png)
 
 ## Item 8 - Pipelines
+Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do cade.
+
+### Pipeline de dados sintéticos de vendas:
+- Task 1 - [generate_data.py](./scripts/bronze/generate_data.py):
+
+    O primeiro script dessa pipeline é o script que gera os [dados sintéticos](./data/raw/synthetic_data_full.csv) com a biblioteca Faker e os salva localmente em formato CSV, representando a primeira etapa de extração de dados.
+
+- Task 2 - [ingest.py](./scripts/ingest.py):
+
+    O segundo script dessa pipeline é o que pega os dados gerados pelo primeiro script e os salva em formato de planilha no Google Sheets se comunicando com sua API.
+
+- Task 3 - Conectar, ingerir e catalogar dados:
+
+    Essa terceira etapa da pipeline infelizmente precisou ser manual por eu não ter conseguido utilizar a API da Dadosfera para automatizar, mas ela se trata basicamente da criação manual na plataforma da Dadosfera de uma conexão com o Google Sheets, a criação de uma pipeline da plataforma que ingere os dados usando essa conexão e por fim a catalogação dos dados ingeridos feita de forma automática pela prataforma.
+
+- Task 4 [data_quality_report.py](./scripts/silver/data_quality_report.py):
+
+    Esse script utiliza a biblioteca Great Expectations para realizar verificações de qualidade de dados localmente sobre a base de dados anteriormente ingerida e depois gera um relatório sobre os defeitos encontrados.
+
+- Task 5 [clean.py](./scripts/silver/clean.py):
+
+    Esse script PySpark Realiza a limpeza e correção de todos os possíveis defeitos encontrados pelo script anterior e salva também localmente os [dados com qualidade](./data/clean/clean_orders/) garantida em formato CSV.
+
+- Task 6 - [ingest.py](./scripts/ingest.py):
+
+    Novamente é executado o mesmo script da Task 2 porém dessa vez com uma alteração de parametros que faz ele carregar o novo conjunto de dados tratados em formato de planilha no Google Sheets.
+
+- Task 7 - Conectar, ingerir e catalogar dados:
+
+    Essa etapa da pipeline trata-se do extamo mesmo processo manual da Task 3 porém agora feito sobre o novo conjunto de dados tratados.
+
+- Task 8 - [data_modeling.py](./scripts/gold/data_modeling.py):
+
+    Esse script PySpark lê o conjunto de dados tratados armazenados localmente e realiza uma [modelagem dimensional](./data/analytics/) sobre os dados com o objetivo de melhorar consultas analíticas, dividindo o conjunto de uma para 7 tabelas gravadas localmente em Parquet.
+
+- Task 9 - [ingest.py](./scripts/ingest.py):
+
+    Novamente é executado o mesmo script das Tasks 2 e 6 porém dessa vez com uma alteração de parametros que faz ele carregar os novos conjuntos de dados normalizados em formato de planilha no Google Sheets.
+
+- Task 10 - Conectar, ingerir e catalogar dados:
+
+    Essa etapa da pipeline trata-se do extamo mesmo processo manual da Tasks 3 e 7 porém agora feito sobre o novo conjunto de dados modelados.
+
+### Pipeline de dados sobre avaliações de produtos do Mercado Livre:
+
+- Task 1 - Baixar os dados do Github:
+
+    A primeira etapa se trata apenas de baixar os dados do repositório no Github executando o seguinte comando no diretório raiz do projeto:
+    ```
+    wget https://raw.githubusercontent.com/octaprice/ecommerce-product-dataset/main/data/mercadolivre_com_br/reviews_mercadolivre_com_br_1.json
+    ```
+
+- Task 2 - [extract_features.py](./scripts/bronze/extract_features.py)
+
+    A segunda e última etapa dessa pipeline se trata simplesmente de executar um script Python que utiliza modelos de IA do HuggingFace para extrair features a mais para o conjunto de dados de forma programática e gravar um [conjunto de dados enriquecido por IA](./data/raw/reviews_with_features_sample.json)
+
 ## Item 9 - Data Apps
 ## Item 10 - Apresentação
 ## Item Bonus - GenAI + Data Apps
