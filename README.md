@@ -465,7 +465,9 @@ Depois de criar todos esses gráficos respondendo às perguntas finalmente obtiv
 ![](./docs/prints/item_7/22_dashboard_finalizada.png)
 
 ## Item 8 - Pipelines
-Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do cade.
+Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do case.
+
+Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera porém eu não obtive acesso ao módulo de transformação mas desenvolvi as pipelines de qualquer forma.
 
 ### Pipeline de dados sintéticos de vendas:
 - Task 1 - [generate_data.py](./scripts/bronze/generate_data.py):
