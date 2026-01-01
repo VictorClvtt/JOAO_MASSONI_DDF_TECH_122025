@@ -73,6 +73,7 @@ E preenchi as informações da conexão
 
 Depois de preencher as informações da conexão consegui cria-la com sucesso
 ![](./docs/prints/item_2/13_conexao_criada.png)
+Link do ativo de conexão criado: [https://app.dadosfera.ai/pt-BR/collect/connections/1767033270091_3wte0afg_google-sheets-1.0.0](https://app.dadosfera.ai/pt-BR/collect/connections/1767033270091_3wte0afg_google-sheets-1.0.0)
 
 Com a conexão criada parti para a criação da pipeline que foi a última etapa da integração:
 
@@ -87,9 +88,12 @@ E preenchi as informações da pipeline
 
 Depois de preencher as informações da pipeline, fazer outras tentativas trocando algumas configurações e esperar um pouco finalmente a pipeline foi executada e os dados foram integrados com sucesso
 ![](./docs/prints/item_2/19_pipeline_executada.png)
+Link do ativo de pipelode de integração criado: [https://app.dadosfera.ai/pt-BR/collect/pipelines/ef42bcf9-425f-4b02-8d18-f14ca77f07df](https://app.dadosfera.ai/pt-BR/collect/pipelines/ef42bcf9-425f-4b02-8d18-f14ca77f07df)
 
 ## Item 3 - Exploração
 Pelo que pude perceber, os dados foram automaticamente catalogados na plataforma da Dadosfera após a integração, a unica coisa que fiz foi alterar o nome da tabela no catálogo para "orders_landing_zone".
+
+Link para o ativo de catálogo de dados criado: [https://app.dadosfera.ai/pt-BR/catalog/data-assets/f46eaba5-a04b-4902-baa9-c57b699df5e3](https://app.dadosfera.ai/pt-BR/catalog/data-assets/f46eaba5-a04b-4902-baa9-c57b699df5e3)
 
 Com os dados já catalogados, pude explora-los através da plataforma da Dadosfera que me trouxe algumas estatísticas sobre cada coluna do conjunto e uma visualização de uma amostra dos dados em formato de tabela:
 ![](./docs/prints/item_3/01_estatisticas_basicas.png)
@@ -172,6 +176,12 @@ if __name__ == "__main__":
         spreadsheet_name="clean_orders"
     )
 ```
+
+Link para a conexão utilizada para a integração dos dados refinados: [https://app.dadosfera.ai/pt-BR/collect/connections/1767033270091_3wte0afg_google-sheets-1.0.0](https://app.dadosfera.ai/pt-BR/collect/connections/1767033270091_3wte0afg_google-sheets-1.0.0)
+
+Link para a pipeline de integração gerada para os dados refinados: [https://app.dadosfera.ai/pt-BR/collect/pipelines/39749d88-1957-4f85-8b45-460b99c2c29e](https://app.dadosfera.ai/pt-BR/collect/pipelines/39749d88-1957-4f85-8b45-460b99c2c29e)
+
+Link para o catálogo dos dados refinados gerado sobre os dados refinados: [https://app.dadosfera.ai/pt-BR/catalog/data-assets/f40eca18-f2c8-4b04-84b8-efd482486a93](https://app.dadosfera.ai/pt-BR/catalog/data-assets/f40eca18-f2c8-4b04-84b8-efd482486a93)
 
 ## Item 5 - Processamento
 O dataset que escolhi para esse item é o dataset que baixei para o diretório [./data/raw/](./data/raw/) e que se encontra para download [nesse link](https://raw.githubusercontent.com/octaprice/ecommerce-product-dataset/main/data/mercadolivre_com_br/reviews_mercadolivre_com_br_1.json), o dataset se trata de um pouco mais de 100 mil registros em JSON de avaliações de produtos do Mercado Livre, cada registro contendo a data da avaliação, uma nota numérica, uma avaliação textual e o link original produto avaliado, sendo possível extrair features dos campos de avaliação textual e do link.
@@ -293,7 +303,7 @@ GROUP BY c.customer_name, l.city, l.state;
 ```
 Comportamento do cliente possibilita analisar padrões de consumo dos clientes, considerando volume de pedidos, valor gasto e localização geográfica, sendo útil para segmentação, marketing e identificação de clientes estratégicos.
 
-### Diagrama da Modelagem Diomensional:
+### Diagrama da Modelagem Dimensional:
 Baseado no modelo que desenvolvi no script, criei um diagrama relacional do modelo de dados:
 ![](./docs/diagrams/item_6/diagrama_dw.png)
 
@@ -463,6 +473,7 @@ Pergunta: ``Existe relação entre o preço do produto e o volume de pedidos?``
 Depois de criar todos esses gráficos respondendo às perguntas finalmente obtive a dashboard finalizada:
 ![](./docs/prints/item_7/21_dashboard_finalizada.png)
 ![](./docs/prints/item_7/22_dashboard_finalizada.png)
+Link para o dashboard criado na plataforma: [https://app.dadosfera.ai/pt-BR/catalog/data-assets/b5f770a6-1de2-4bc9-ada3-2bd190dd9c28](https://app.dadosfera.ai/pt-BR/catalog/data-assets/b5f770a6-1de2-4bc9-ada3-2bd190dd9c28)
 
 ## Item 8 - Pipelines
 Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do case.
