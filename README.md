@@ -578,3 +578,6 @@ O aplicativo disponibiliza uma interface interativa que permite ao usuário sele
 
 Após executar o app da mesma forma que executei o app do [Item 9](#item-9---data-apps) pude ver a interface dele, onde é possível selecionar o produto e depois clicar em 'gerar imagem do produto' para fazer a requisição de geração da imagem baseada no produto selecionado:
 ![](./docs/prints/item_bonus/01_interface_do_app.png)
+
+Após alguns segundos a imagem é gerada e mostrada abaixo do botão no app:
+![](./docs/prints/item_bonus/02_imagem_gerada.png)
