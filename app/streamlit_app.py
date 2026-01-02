@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import plotly.express as px
+import pyarrow.dataset as ds
 
 # ======================================================
 # Configuração do App
@@ -13,19 +14,26 @@ st.set_page_config(
 st.title("📊 E-commerce Analytics – Data Exploration App")
 
 # ======================================================
+# Função utilitária – leitura de diretórios parquet
+# ======================================================
+def read_parquet_dir(path: str) -> pd.DataFrame:
+    dataset = ds.dataset(path, format="parquet")
+    return dataset.to_table().to_pandas()
+
+# ======================================================
 # Load data
 # ======================================================
-@st.cache_data
+@st.cache_data(show_spinner=True)
 def load_data():
     base_path = "./data/analytics"
 
-    fact = pd.read_parquet(f"{base_path}/fact_order")
-    dim_date = pd.read_parquet(f"{base_path}/dim_date")
-    dim_status = pd.read_parquet(f"{base_path}/dim_order_status")
-    dim_payment = pd.read_parquet(f"{base_path}/dim_payment_method")
-    dim_product = pd.read_parquet(f"{base_path}/dim_product")
-    dim_customer = pd.read_parquet(f"{base_path}/dim_customer")
-    dim_location = pd.read_parquet(f"{base_path}/dim_location")
+    fact = read_parquet_dir(f"{base_path}/fact_order")
+    dim_date = read_parquet_dir(f"{base_path}/dim_date")
+    dim_status = read_parquet_dir(f"{base_path}/dim_order_status")
+    dim_payment = read_parquet_dir(f"{base_path}/dim_payment_method")
+    dim_product = read_parquet_dir(f"{base_path}/dim_product")
+    dim_customer = read_parquet_dir(f"{base_path}/dim_customer")
+    dim_location = read_parquet_dir(f"{base_path}/dim_location")
 
     df = (
         fact
@@ -39,6 +47,9 @@ def load_data():
 
     return df
 
+# ======================================================
+# Execução
+# ======================================================
 df = load_data()
 
 # ======================================================
@@ -49,8 +60,10 @@ st.sidebar.header("🎛️ Filtros")
 years = sorted(df["year"].dropna().unique())
 selected_years = st.sidebar.multiselect("Ano", years, default=years)
 
-statuses = df["status"].dropna().unique()
-selected_statuses = st.sidebar.multiselect("Status do Pedido", statuses, default=statuses)
+statuses = sorted(df["status"].dropna().unique())
+selected_statuses = st.sidebar.multiselect(
+    "Status do Pedido", statuses, default=statuses
+)
 
 df = df[
     (df["year"].isin(selected_years)) &
@@ -230,11 +243,11 @@ with tab_customers:
 # 🧩 CATEGÓRICO
 # ======================================================
 with tab_categorical:
-    suppliers = df["supplier"].value_counts().reset_index()
-    categories = df["category"].value_counts().reset_index()
-    customers = df["customer_name"].value_counts().reset_index()
-    states = df["state"].value_counts().reset_index()
-    cities = df["city"].value_counts().reset_index()
+    suppliers = df["supplier"].value_counts().reset_index(name="count")
+    categories = df["category"].value_counts().reset_index(name="count")
+    customers = df["customer_name"].value_counts().reset_index(name="count")
+    states = df["state"].value_counts().reset_index(name="count")
+    cities = df["city"].value_counts().reset_index(name="count")
 
     t1, t2, t3, t4, t5 = st.tabs(
         ["🏭 Fornecedores", "🗂️ Categorias", "👥 Clientes", "📍 Estados", "🗺️ Cidades"]

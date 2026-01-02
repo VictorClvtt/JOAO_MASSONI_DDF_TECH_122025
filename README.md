@@ -560,7 +560,21 @@ Com o código do app pronto, foi possível executar o projeto (rodando em http:/
 ![](./docs/prints/item_9/06_aba_numerico.png)
 
 Com o app pronto e presente no repositório do Github com o arquivo requirements.txt foi possível começar o processo de deploy dele, comecei clicando no botão 'Deploy' no canto superior direito da tela e depois clicando em 'Deploy now' 
-![](./docs/prints/item_9/07_opcao_deploy_now.png) 
+![](./docs/prints/item_9/07_opcao_deploy_now.png)
+
+Com isso fui redirecionado para a página inicial do Streamlit Community Cloud onde cliquei na opção de sign-in para logar na plataforma
+![](./docs/prints/item_9/08_opcao_sign_in.png)
+
+Após logar com o Github fui redirecionado para essa página de Deploy onde cliquei em 'Deploy' para finalmente fazer deploy da aplicação
+![](./docs/prints/item_9/09_opcao_deploy.png)
 
 ## Item 10 - Apresentação
+
+
 ## Item Bonus - GenAI + Data Apps
+Iniciei o desenvolvimento do [aplicativo em Streamlit para geração de imagens](./app/streamlit_image_generation_app.py) por IA, que consome exclusivamente a [dimensão de produtos (dim_product)](./data/analytics/dim_product/) proveniente dos [dados modelados](./data/analytics/) na camada analytics.
+
+O aplicativo disponibiliza uma interface interativa que permite ao usuário selecionar um produto a partir da dimensão de produtos e, a partir dessa seleção, realizar requisições a um modelo de geração de imagens, utilizando as informações do produto como base para a geração, que resulta em uma imagem gerada pela IA mostrada no app.
+
+Após executar o app da mesma forma que executei o app do [Item 9](#item-9---data-apps) pude ver a interface dele, onde é possível selecionar o produto e depois clicar em 'gerar imagem do produto' para fazer a requisição de geração da imagem baseada no produto selecionado:
+![](./docs/prints/item_bonus/01_interface_do_app.png)
