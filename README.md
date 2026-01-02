@@ -203,6 +203,8 @@ Por fim o script grava esse novo JSON com as features dentro do mesmo diretório
 
 Neste repositório é possível acessar apenas uma [amostra dos dados](./data/raw/reviews_with_features_sample.json) com features pois infelizmente o processamento que o Colab me disponibilizou não me possibilitou processar os 100 mil registros.
 
+Link do notebook no Google Colab: [https://colab.research.google.com/drive/1SFUiHRGKOBzaAmnVFbexMwzCe7iYlsmM](https://colab.research.google.com/drive/1SFUiHRGKOBzaAmnVFbexMwzCe7iYlsmM)
+
 ## Item 6 - Modelagem
 Para definir um modelo de dados sobre o conjunto de dados de vendas optei por começar desenvolvendo um script PySpark que modela os dados posteriormente limpos por outro script PySpark pois estou mais acostumado a olhar o schema dos dados por meio do código e a partir disso modelar as tabelas.
 
@@ -535,7 +537,30 @@ Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera 
     A segunda e última etapa dessa pipeline se trata simplesmente de executar um script Python que utiliza modelos de IA do HuggingFace para extrair features a mais para o conjunto de dados de forma programática e gravar um [conjunto de dados enriquecido por IA](./data/raw/reviews_with_features_sample.json)
 
 ## Item 9 - Data Apps
+Iniciei desenvolvendo o código do [app Streamlit](./app/streamlit_app.py) o qual consome os [dados modelados](./data/analytics/) e apresenta uma exploração mais detalhada dos dados, contendo desde métricas importantes sobre os dados, alguns gráficos básicos até análises dos valores presentes em variáveis categóricas e numéricas.
 
+Com o código do app pronto, foi possível executar o projeto (rodando em http://localhost:8502) com o comando `streamlit run ./app/streamlit_app.py` (com o venv instalado e ativado), dividi o app em abas e adicionei alguns filtros do lado esquerdo da tela e esse foi o resultado:
+
+**Aba de Visão Geral:** Visão geral sobre vendas e faturamento.
+![](./docs/prints/item_9/01_aba_visao_geral.png)
+
+**Aba de Análise Temporal:** Gráficos envolvendo séries temporais.
+![](./docs/prints/item_9/02_aba_temporal.png)
+
+**Aba de Produtos e Fornecedores:** Análise de performance de produtos e fornecedores.
+![](./docs/prints/item_9/03_aba_produtos_e_fornecedores.png)
+
+**Aba de Clientes**: Análise de clientes mais fiéis.
+![](./docs/prints/item_9/04_aba_clientes.png)
+
+**Aba de Variáveis Categoricas:** Análise de valores únicos e contagens de cada valor em variáveis categóricas.
+![](./docs/prints/item_9/05_aba_categorico.png)
+
+**Aba de Variáveis Numéricas:** Análise estatística, de distribuição, de outliers e de correlação sobre variáveis numéricas.
+![](./docs/prints/item_9/06_aba_numerico.png)
+
+Com o app pronto e presente no repositório do Github foi possível começar o processo de deploy dele, comecei clicando no botão 'Deploy' no canto superior direito da tela e depois clicando em 'Deploy now' 
+![](./docs/prints/item_9/07_opcao_deploy_now.png) 
 
 ## Item 10 - Apresentação
 ## Item Bonus - GenAI + Data Apps
