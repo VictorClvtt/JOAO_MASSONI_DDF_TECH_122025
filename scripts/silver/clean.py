@@ -63,7 +63,7 @@ logger.info(f"Remaining null unit_price values after imputation: {remaining_null
 logger.info("Removing rows with invalid quantity values (quantity < 1)")
 
 df = df.where(
-    F.col("quantity") < 0,
+    F.col("quantity") >= 0,
 )
 
 logger.info("Invalid quantity rows removed")

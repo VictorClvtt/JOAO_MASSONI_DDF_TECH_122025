@@ -478,7 +478,7 @@ Link para o dashboard criado na plataforma: [https://app.dadosfera.ai/pt-BR/cata
 ## Item 8 - Pipelines
 Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do case.
 
-Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera porém eu não obtive acesso ao módulo de transformação mas desenvolvi as pipelines de qualquer forma.
+Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera porém eu não obtive acesso ao módulo de transformação mas desenvolvi as pipelines de qualquer forma. Independente disso acredito que não teria problemas para utilizar esse módulo da plataforma uma vez que tenho experiência em criar piprlines de dados.
 
 ### Pipeline de dados sintéticos de vendas:
 - Task 1 - [generate_data.py](./scripts/bronze/generate_data.py):
@@ -535,5 +535,7 @@ Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera 
     A segunda e última etapa dessa pipeline se trata simplesmente de executar um script Python que utiliza modelos de IA do HuggingFace para extrair features a mais para o conjunto de dados de forma programática e gravar um [conjunto de dados enriquecido por IA](./data/raw/reviews_with_features_sample.json)
 
 ## Item 9 - Data Apps
+
+
 ## Item 10 - Apresentação
 ## Item Bonus - GenAI + Data Apps

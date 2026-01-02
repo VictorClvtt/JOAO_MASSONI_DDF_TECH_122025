@@ -12,8 +12,8 @@ logging.basicConfig(
 
 logger = logging.getLogger(__name__)
 
-INPUT_PATH = "../../data/clean/clean_orders/"
-OUTPUT_PATH = "../../data/analytics"
+INPUT_PATH = "./data/clean/clean_orders/"
+OUTPUT_PATH = "./data/analytics"
 
 spark = SparkSession.builder.appName("Data Modeling").getOrCreate()
 
