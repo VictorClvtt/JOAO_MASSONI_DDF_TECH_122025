@@ -568,6 +568,9 @@ Com isso fui redirecionado para a página inicial do Streamlit Community Cloud o
 Após logar com o Github fui redirecionado para essa página de Deploy onde cliquei em 'Deploy' para finalmente fazer deploy da aplicação
 ![](./docs/prints/item_9/09_opcao_deploy.png)
 
+Depois de esperar alguns segundos da aplicação fazendo setup o app rodou perfeitamente no Streamlit Community Cloud na URL [https://joaomaappniddftech122025-4crwqr9moiymepanvcgfka.streamlit.app/](https://joaomaappniddftech122025-4crwqr9moiymepanvcgfka.streamlit.app/)
+![](./docs/prints/item_9/10_app_rodando.png)
+
 ## Item 10 - Apresentação
 
 
