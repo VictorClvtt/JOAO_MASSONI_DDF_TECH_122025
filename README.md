@@ -559,7 +559,7 @@ Com o código do app pronto, foi possível executar o projeto (rodando em http:/
 **Aba de Variáveis Numéricas:** Análise estatística, de distribuição, de outliers e de correlação sobre variáveis numéricas.
 ![](./docs/prints/item_9/06_aba_numerico.png)
 
-Com o app pronto e presente no repositório do Github foi possível começar o processo de deploy dele, comecei clicando no botão 'Deploy' no canto superior direito da tela e depois clicando em 'Deploy now' 
+Com o app pronto e presente no repositório do Github com o arquivo requirements.txt foi possível começar o processo de deploy dele, comecei clicando no botão 'Deploy' no canto superior direito da tela e depois clicando em 'Deploy now' 
 ![](./docs/prints/item_9/07_opcao_deploy_now.png) 
 
 ## Item 10 - Apresentação
