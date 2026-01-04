@@ -572,7 +572,11 @@ Depois de esperar alguns segundos da aplicação fazendo setup o app rodou perfe
 ![](./docs/prints/item_9/10_app_rodando.png)
 
 ## Item 10 - Apresentação
+O link da apresentação está no arquivo [video_link.txt](./docs/presentation/video_link.txt) mas também pode ser acessado por aqui: [https://www.youtube.com/watch?v=h1dv7p8Nig8](https://www.youtube.com/watch?v=h1dv7p8Nig8)
 
+O vídeo foi postado no Youtube como não listado como pedido na documentação do case.
+
+Muito obrigado pela oportunidade, espero que gostem do meu trabalho.
 
 ## Item Bonus - GenAI + Data Apps
 Iniciei o desenvolvimento do [aplicativo em Streamlit para geração de imagens](./app/streamlit_image_generation_app.py) por IA, que consome exclusivamente a [dimensão de produtos (dim_product)](./data/analytics/dim_product/) proveniente dos [dados modelados](./data/analytics/) na camada analytics.
