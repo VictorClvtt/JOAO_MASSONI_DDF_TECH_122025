@@ -2,6 +2,7 @@
 Case desenvolvido por **João Victor Clivatti Massoni**
 
 ## Sumário
+- [Setup]()
 - [Item 0 - Agilidade e Planejamento](#item-0---agilidade-e-planejamento)
 - [Item 1 - Base de Dados](#item-1---base-de-dados)
 - [Item 2 - Integração](#item-2---integração)
@@ -15,6 +16,92 @@ Case desenvolvido por **João Victor Clivatti Massoni**
 - [Item 10 - Apresentação](#item-10---apresentação)
 - [Item Bonus - GenAI + Data Apps](#item-bonus---genai--data-apps)
 
+## Setup
+Antes de executar localmente qualquer script Python presente neste repositório, é necessário criar um ambiente virtual (virtual environment), instalar os requisitos do projeto e, em seguida, ativar esse ambiente para a execução dos scripts.
+
+Para facilitar o processo de criação, instalação e ativação do ambiente virtual, esta documentação disponibiliza três scripts de setup, um para cada sistema operacional:
+
+⚠️ Antes de executá-los, é necessário conceder permissão de execução aos scripts com o comando `chmod +x setup/*.sh` no Linux/MacOS ou via interface gráfica (botão direito no arquivo -> propriedades -> permissões) no Windows.
+
+- **Linux**: [linux_setup.sh](./setup/linux_setup.sh) (Compatível com Bash e Zsh)
+- **Windows**: [windows_setup.sh](./setup/windows_setup.sh)
+- **MacOS**: [macos_setup.sh](./setup/macos_setup.sh)
+
+Após a execução do script correspondente ao seu sistema operacional, basta ativar o ambiente virtual no terminal que será utilizado para executar os scripts, garantindo que eles rodem dentro do ambiente configurado, utilizando o comando apropriado para o seu sistema:
+- **Linux**: `source .venv/bin/activate` (Compatível com Bash e Zsh)
+- **Windows**:
+  
+  - **CMD**: `.venv\Scripts\activate`
+  - **PowerShell**: `.venv\Scripts\Activate.ps1`
+
+- **MacOS**: `source .venv/bin/activate`
+
+### Requisito adicional: JDK 17 (Apache Spark)
+
+Este projeto utiliza Apache Spark para execução de alguns scripts.
+Para que esses scripts funcionem corretamente, é obrigatório ter o Java Development Kit (JDK) versão 17 instalado e disponível no sistema.
+
+Sem o JDK 17:
+
+- O Spark não inicializa corretamente
+
+- Scripts PySpark falham na criação da SparkSession
+
+**Verificação do Java instalado:**
+
+Em qualquer sistema, é possível verificar com: `java -version`
+
+A saída esperada deve indicar: `openjdk version "17.x.x"`
+
+### Instalação do JDK 17 por sistema operacional:
+🐧 **Linux**
+
+**Debian / Ubuntu:**
+
+```
+sudo apt update
+sudo apt install -y openjdk-17-jdk
+```
+
+**Arch / Manjaro:**
+
+```
+sudo pacman -Sy jdk17-openjdk
+```
+
+🍎 **macOS**
+
+No macOS, recomenda-se o uso do Homebrew:
+
+```
+brew install openjdk@17
+```
+
+Após a instalação, pode ser necessário adicionar o Java ao PATH:
+
+```
+echo 'export PATH="/opt/homebrew/opt/openjdk@17/bin:$PATH"' >> ~/.zshrc
+```
+
+
+💡 Em Macs Intel, o caminho pode ser /usr/local/opt/openjdk@17.
+
+🪟 **Windows**
+
+No Windows, recomenda-se o uso do Chocolatey:
+
+```
+choco install openjdk17 -y
+```
+
+Alternativamente, o JDK 17 pode ser instalado manualmente a partir do site oficial da Eclipse Adoptium (Temurin).
+
+Após a instalação, confirme se o Java está no PATH executando:
+
+```
+java -version
+```
+
 ## Item 0 - Agilidade e Planejamento
 Abaixo está o diagrama de todo o case representando o meu entendimento e planejamento do case como todo:
 ![](./docs/diagrams/item_0/fluxograma_case.png)
@@ -27,6 +114,8 @@ Na escolha do conjunto de dados optei por criar um script Python que gera e salv
 O script gera 125 mil linhas de dados que apesar de sintéticos seguem uma coerência entre si, estanto de acordo com os requisitos definidos pelo case.
 
 O arquivo do script esta localizado em [./scripts/bronze/generate_data.py](./scripts/bronze/generate_data.py) e os arquivos de dados em CSV que ele grava estão localizados em [./data/raw/synthetic_data_full.csv](./data/raw/synthetic_data_full.csv)(sendo o conjunto de dados completo) e [./data/raw/synthetic_data_sample.csv](./data/raw/synthetic_data_sample.csv)(sendo uma amostra de mil linhas do conjunto completo).
+
+Para executar o script basta executar o comando `python -m scripts.bronze.generate_data` no terminal.
 
 ## Item 2 - Integração
 Na etapa de integração e ingestão da base de dados gerada na plataforma da Dadosfera, inicialmente criei um script([./scripts/ingest.py](./scripts/ingest.py)) que grava os dados que estão armazenados localmente em uma planilha do Google Sheets no meu Google Drive pessoal para poder conectar a Dadosfera à essa planilha mais facilmente por estar na nuvem.
@@ -43,7 +132,7 @@ Para finalmente poder me comunicar com as APIs, movi o arquivo baixado de creden
 
 ![](./docs/prints/item_2/05_renomear_e_mover_credenciais.png)
 
-Com isso pude finalmente executar o script que move os dados para o Google Sheets, precisando apenas autorizar o script a manipular arquivos no meu Google Drive para que fosse criado o arquivo [token.json](./token.json) e não fosse necessária essa confirmação em execuções futuras. Para executar o script deve-se executa-lo como módulo: ```python -m scripts.bronze.generate_data``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado) com os seguintes parametros
+Com isso pude finalmente executar o script que move os dados para o Google Sheets, precisando apenas autorizar o script a manipular arquivos no meu Google Drive para que fosse criado o arquivo [token.json](./token.json) e não fosse necessária essa confirmação em execuções futuras. Para executar o script deve-se executa-lo como módulo: ```python -m scripts.ingest``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado) com os seguintes parametros
 ```python
 if __name__ == "__main__":
     ingest_data_to_sheets(
@@ -160,7 +249,7 @@ Para tratar esses defeitos nos dados optei por utilizar PySpark(Spark) por ser u
 
 Desenvolvi um script com PysPark que lê os dados crus, corrige da forma mais adequada possível(procurando recuperar dados) cada um dos defeitos que encontrei com o Great Expectations e grava o dataset limpo localmente em [data/clean/clean_orders/](./data/clean/clean_orders/). O script pode ser executado como módulo com o comando ```python -m scripts.silver.clean``` dentro do diretório raiz do projeto (lembrando que o venv deve ter sido criado e ativado e é necessário ter um JDK insatalado para executar Spark, de preferência o 17).
 
-Agora se mudarmos os parametros da funcao de data quality para que ela verifique a qualidade de dados sobre os dados limpos pelo script PySpark ser;a possível observar que o conjunto de dados limpos passa em todas as condições de qualidade de dados definidas no script as quais os dados crus não passavam:
+Agora se mudarmos os parametros da função de data quality para que ela verifique a qualidade de dados sobre os dados limpos pelo script PySpark e executarmos o script novamente com o comando ```python -m scripts.silver.data_quality_report``` será possível observar que o conjunto de dados limpos passa em todas as condições de qualidade de dados definidas no script as quais os dados crus não passavam:
 ```python
 if __name__ == "__main__":
     # data_quality_report(dataset="raw", dataset_path="./data/raw/synthetic_data_full.csv")
@@ -209,6 +298,8 @@ Link do notebook no Google Colab: [https://colab.research.google.com/drive/1SFUi
 
 ## Item 6 - Modelagem
 Para definir um modelo de dados sobre o conjunto de dados de vendas optei por começar desenvolvendo um script PySpark que modela os dados posteriormente limpos por outro script PySpark pois estou mais acostumado a olhar o schema dos dados por meio do código e a partir disso modelar as tabelas.
+
+O script desenvolvido pode ser executado com o comando ```python -m scripts.gold.data_modeling``` dentro do venv, ao ser executado ele lê localmente os [dados limpos](./data/clean/) e armazena os dados modelados localmente em uma [camada de analytics](./data/analytics/).
 
 ### Modelagem definida:
 Durante o desenvolvimento do [script de modelagem](./scripts/gold/data_modeling.py) eu desenvolvi o seguinte modelo:
@@ -590,3 +681,5 @@ Após executar o app da mesma forma que executei o app do [Item 9](#item-9---dat
 
 Após alguns segundos a imagem é gerada e mostrada abaixo do botão no app:
 ![](./docs/prints/item_bonus/02_imagem_gerada.png)
+
+Também foi feito o deploy deste app no Streamlit Community Cloud da mesma forma que foi feito com o app do [item 9](#item-9---data-apps) e pode ser acessado pelo seguinte link: [https://joaomaappniddftech122025-jlmv5ywrbejznjli3kniyl.streamlit.app/](https://joaomaappniddftech122025-jlmv5ywrbejznjli3kniyl.streamlit.app/)
