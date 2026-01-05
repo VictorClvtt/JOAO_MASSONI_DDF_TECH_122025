@@ -19,6 +19,8 @@ Case desenvolvido por **João Victor Clivatti Massoni**
 Abaixo está o diagrama de todo o case representando o meu entendimento e planejamento do case como todo:
 ![](./docs/diagrams/item_0/fluxograma_case.png)
 
+**OBS**: A documentação do case sugeria a realização do deploy do código de alguns itens (como o [8](#item-8---pipelines) e [9](#item-9---data-apps)) na plataforma da Dadosfera; porém, isso depende do acesso a módulos específicos da plataforma, os quais não me foram disponibilizados. A indisponibilidade foi comunicada por e-mail, sem retorno em tempo hábil para ajustes. Ainda assim, toda a arquitetura, ingestão, modelagem e disponibilização dos dados foram desenvolvidas de forma aderente às capacidades da Dadosfera. Peço, portanto, que esse contexto seja levado em consideração no momento da avaliação.
+
 ## Item 1 - Base de Dados
 Na escolha do conjunto de dados optei por criar um script Python que gera e salva localmente uma base de dados sintéticos sobre vendas, que seriam vendas da empresa de e-commerce a qual a definição do case se refere.
 
