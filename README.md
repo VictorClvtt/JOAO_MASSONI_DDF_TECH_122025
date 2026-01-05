@@ -24,7 +24,7 @@ Para facilitar o processo de criação, instalação e ativação do ambiente vi
 ⚠️ Antes de executá-los, é necessário conceder permissão de execução aos scripts com o comando `chmod +x setup/*.sh` no Linux/MacOS ou via interface gráfica (botão direito no arquivo -> propriedades -> permissões) no Windows.
 
 - **Linux**: [linux_setup.sh](./setup/linux_setup.sh) (Compatível com Bash e Zsh)
-- **Windows**: [windows_setup.sh](./setup/windows_setup.sh)
+- **Windows**: [windows_setup.sh](./setup/windows_setup.sh) (Compatível com CMD, adicionar '.ps1' ao fim da segunda linha do script para adaptar para PoweShell)
 - **MacOS**: [macos_setup.sh](./setup/macos_setup.sh)
 
 Após a execução do script correspondente ao seu sistema operacional, basta ativar o ambiente virtual no terminal que será utilizado para executar os scripts, garantindo que eles rodem dentro do ambiente configurado, utilizando o comando apropriado para o seu sistema:
@@ -40,6 +40,8 @@ Após a execução do script correspondente ao seu sistema operacional, basta at
 
 Este projeto utiliza Apache Spark para execução de alguns scripts.
 Para que esses scripts funcionem corretamente, é obrigatório ter o Java Development Kit (JDK) versão 17 instalado e disponível no sistema.
+
+O JDK 17 foi escolhido por ser a versão LTS recomendada e plenamente compatível com Apache Spark 3.x.
 
 Sem o JDK 17:
 
@@ -448,7 +450,7 @@ Depois de executar a query e ver o resultado cliquei em 'Display' e e depois sel
 Por fim salvei o gráfico e fui redirecionado para a página da dashboard com o novo gráfico já inserido nela, esse processo foi repetido para todos os graficos seguintes
 ![](./docs/prints/item_7/13_salvar_grafico_de_barras.png)
 
-repeti o processo para o grafico de linhas para análise de série temporal onde aé possível ver a variação de renda ao longo dos meses do ano:
+repeti o processo para o grafico de linhas para análise de série temporal onde é possível ver a variação de renda ao longo dos meses do ano:
 
 Código da query:
 ```SQL
@@ -463,7 +465,7 @@ Pergunta: ``Como a receita evolui mensalmente?``
 
 ![](./docs/prints/item_7/14_salvar_grafico_de_linhas.png)
 
-Após os dois primeiros gráficos estarem prontos pude velos na dashboard e parti para a criação dos outros cinco gráficos e perguntas:
+Após os dois primeiros gráficos estarem prontos pude ve-los na dashboard e parti para a criação dos outros cinco gráficos e perguntas:
 ![](./docs/prints/item_7/15_analise_de_categorias_e_serie_temporal.png)
 
 ### Perguntas:
@@ -573,7 +575,7 @@ Link para o dashboard criado na plataforma: [https://app.dadosfera.ai/pt-BR/cata
 ## Item 8 - Pipelines
 Pelo que entendi sobre o Item 8 sem saber eu acabei fazendo esse item já nas etapas anteriores, portanto vou listar aqui os script que compõe as pipelines que desenvolvi ao longo do case.
 
-Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera porém eu não obtive acesso ao módulo de transformação mas desenvolvi as pipelines de qualquer forma. Independente disso acredito que não teria problemas para utilizar esse módulo da plataforma uma vez que tenho experiência em criar piprlines de dados.
+Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera porém eu não obtive acesso ao módulo de transformação mas desenvolvi as pipelines de qualquer forma. Independente disso acredito que não teria problemas para utilizar esse módulo da plataforma uma vez que tenho experiência em criar pipelines de dados.
 
 ### Pipeline de dados sintéticos de vendas:
 - Task 1 - [generate_data.py](./scripts/bronze/generate_data.py):
@@ -602,7 +604,7 @@ Acredito que essas pipelines poderiam ser executadas na plataforma da Dadosfera 
 
 - Task 7 - Conectar, ingerir e catalogar dados:
 
-    Essa etapa da pipeline trata-se do extamo mesmo processo manual da Task 3 porém agora feito sobre o novo conjunto de dados tratados.
+    Essa etapa da pipeline trata-se do exato mesmo processo manual da Task 3 porém agora feito sobre o novo conjunto de dados tratados.
 
 - Task 8 - [data_modeling.py](./scripts/gold/data_modeling.py):
 
