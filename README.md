@@ -2,7 +2,7 @@
 Case desenvolvido por **João Victor Clivatti Massoni**
 
 ## Sumário
-- [Setup]()
+- [Setup](#setup)
 - [Item 0 - Agilidade e Planejamento](#item-0---agilidade-e-planejamento)
 - [Item 1 - Base de Dados](#item-1---base-de-dados)
 - [Item 2 - Integração](#item-2---integração)
