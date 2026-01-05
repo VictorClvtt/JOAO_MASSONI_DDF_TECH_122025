@@ -23,9 +23,9 @@ Para facilitar o processo de criação, instalação e ativação do ambiente vi
 
 ⚠️ Antes de executá-los, é necessário conceder permissão de execução aos scripts com o comando `chmod +x setup/*.sh` no Linux/MacOS ou via interface gráfica (botão direito no arquivo -> propriedades -> permissões) no Windows.
 
-- **Linux**: [linux_setup.sh](./setup/linux_setup.sh) (Compatível com Bash e Zsh)
-- **Windows**: [windows_setup.sh](./setup/windows_setup.sh) (Compatível com CMD, adicionar '.ps1' ao fim da segunda linha do script para adaptar para PoweShell)
-- **MacOS**: [macos_setup.sh](./setup/macos_setup.sh)
+- **Linux**: [linux_setup.sh](./setup/linux_setup.sh) (Compatível com Bash e Zsh), executar com o comando `./setup/linux_setup.sh`
+- **Windows**: [windows_setup.sh](./setup/windows_setup.sh) (Compatível com CMD, adicionar '.ps1' ao fim da segunda linha do script para adaptar para PoweShell), executar com o comando `./setup/windows_setup.sh`
+- **MacOS**: [macos_setup.sh](./setup/macos_setup.sh), executar com o comando `./setup/macos_setup.sh`
 
 Após a execução do script correspondente ao seu sistema operacional, basta ativar o ambiente virtual no terminal que será utilizado para executar os scripts, garantindo que eles rodem dentro do ambiente configurado, utilizando o comando apropriado para o seu sistema:
 - **Linux**: `source .venv/bin/activate` (Compatível com Bash e Zsh)
